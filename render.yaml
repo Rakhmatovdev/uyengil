@@ -1,0 +1,22 @@
+services:
+  - type: web
+    name: obmen-valyuta-bot
+    runtime: docker
+    plan: free
+    healthCheckPath: /health
+    autoDeploy: true
+    envVars:
+      - key: BOT_TOKEN
+        sync: false
+      - key: DATABASE_URL
+        sync: false
+      - key: WEBHOOK_BASE_URL
+        value: https://obmen-valyuta-bot.onrender.com
+      - key: WEBHOOK_SECRET
+        sync: false
+      - key: RATE_REFRESH_SECONDS
+        value: "1800"
+      - key: RESERVATION_SECONDS
+        value: "120"
+      - key: ORDER_TTL_HOURS
+        value: "24"
