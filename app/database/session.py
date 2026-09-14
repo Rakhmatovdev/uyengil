@@ -9,10 +9,13 @@ def normalize_database_url(url: str) -> str:
         parsed = parsed.set(drivername='postgresql+asyncpg')
     query = dict(parsed.query)
     # asyncpg uses `ssl`; libpq-only options otherwise cause connection errors.
-    if 'sslmode' in query and 'ssl' not in query:
-        query['ssl'] = query.pop('sslmode')
+    sslmode = query.pop('sslmode', None)
+    if sslmode is not None and 'ssl' not in query:
+        query['ssl'] = sslmode
     query.pop('channel_binding', None)
-    return str(parsed.set(query=query))
+    # str(URL) redacts the password to '***', which breaks authentication.
+    # This string is for the database driver only and must never be logged.
+    return parsed.set(query=query).render_as_string(hide_password=False)
 
 
 def create_database(url):
